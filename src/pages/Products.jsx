@@ -130,13 +130,17 @@ export default function Products() {
 
     setSaving(true)
     try {
-      // Generate unique SKU: name + timestamp to ensure uniqueness
+      // Generate unique SKU: name + timestamp + random to ensure uniqueness
+      const itemName = formData.name?.trim() || 'item'
+      const timestamp = Date.now()
+      const randomSuffix = Math.random().toString(36).substring(2, 7)
+
       const uniqueSku = editingProduct
-        ? (editingProduct.sku || `${formData.name.trim()}-${Date.now()}`)
-        : `${formData.name.trim()}-${Date.now()}`
+        ? (editingProduct.sku || `${itemName}-${timestamp}-${randomSuffix}`)
+        : `${itemName}-${timestamp}-${randomSuffix}`
 
       const productData = {
-        name: formData.name.trim(),
+        name: itemName,
         sku: uniqueSku,
         category: formData.category,
         totalStock: parseInt(formData.totalStock),
@@ -144,6 +148,8 @@ export default function Products() {
         returned: parseInt(formData.returned || 0),
         price: parseFloat(formData.price || 0)
       }
+
+      console.log('Saving product with data:', productData) // Debug log
 
       if (editingProduct) {
         await productAPI.update(editingProduct._id, productData)

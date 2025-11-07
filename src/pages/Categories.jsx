@@ -193,11 +193,14 @@ export default function Categories() {
 
     setSaving(true)
     try {
-      // Generate unique SKU: name + timestamp to ensure uniqueness
-      const uniqueSku = `${productFormData.name.trim()}-${Date.now()}`
+      // Generate unique SKU: name + timestamp + random to ensure uniqueness
+      const itemName = productFormData.name?.trim() || 'item'
+      const timestamp = Date.now()
+      const randomSuffix = Math.random().toString(36).substring(2, 7)
+      const uniqueSku = `${itemName}-${timestamp}-${randomSuffix}`
 
       const productData = {
-        name: productFormData.name.trim(),
+        name: itemName,
         sku: uniqueSku,
         category: productFormData.category,
         totalStock: parseInt(productFormData.totalStock),
@@ -205,6 +208,8 @@ export default function Categories() {
         returned: parseInt(productFormData.returned || 0),
         price: parseFloat(productFormData.price || 0)
       }
+
+      console.log('Creating product with data:', productData) // Debug log
 
       await productAPI.create(productData)
       handleCloseProductDialog()
