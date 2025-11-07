@@ -193,9 +193,12 @@ export default function Categories() {
 
     setSaving(true)
     try {
+      // Generate unique SKU: name + timestamp to ensure uniqueness
+      const uniqueSku = `${productFormData.name.trim()}-${Date.now()}`
+
       const productData = {
         name: productFormData.name.trim(),
-        sku: productFormData.name.trim(), // Use item name as SKU
+        sku: uniqueSku,
         category: productFormData.category,
         totalStock: parseInt(productFormData.totalStock),
         sold: parseInt(productFormData.sold || 0),

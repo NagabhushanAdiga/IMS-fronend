@@ -130,9 +130,14 @@ export default function Products() {
 
     setSaving(true)
     try {
+      // Generate unique SKU: name + timestamp to ensure uniqueness
+      const uniqueSku = editingProduct
+        ? (editingProduct.sku || `${formData.name.trim()}-${Date.now()}`)
+        : `${formData.name.trim()}-${Date.now()}`
+
       const productData = {
         name: formData.name.trim(),
-        sku: formData.name.trim(), // Use item name as SKU
+        sku: uniqueSku,
         category: formData.category,
         totalStock: parseInt(formData.totalStock),
         sold: parseInt(formData.sold || 0),
