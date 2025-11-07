@@ -195,6 +195,7 @@ export default function Categories() {
     try {
       const productData = {
         name: productFormData.name.trim(),
+        sku: productFormData.name.trim(), // Use item name as SKU
         category: productFormData.category,
         totalStock: parseInt(productFormData.totalStock),
         sold: parseInt(productFormData.sold || 0),
