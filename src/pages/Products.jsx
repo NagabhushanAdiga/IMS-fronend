@@ -437,7 +437,15 @@ export default function Products() {
         </DialogActions>
       </Dialog>
 
-      <Dialog open={deleteDialogOpen} onClose={handleDeleteCancel}>
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleDeleteCancel}
+        PaperProps={{
+          sx: {
+            borderTop: '10px solid #f44336'
+          }
+        }}
+      >
         <DialogTitle>Confirm delete</DialogTitle>
         <DialogContent>
           <DialogContentText>

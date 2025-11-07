@@ -60,9 +60,16 @@ export default function Sales() {
     try {
       setLoading(true)
       const { data } = await saleAPI.getAll({ keyword: searchTerm })
-      setOrders(data.sales || data)
+      const salesData = data.sales || data || []
+      setOrders(Array.isArray(salesData) ? salesData : [])
     } catch (error) {
       console.error('Error fetching sales:', error)
+      setOrders([])
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.message || 'Error loading sales data',
+        severity: 'error'
+      })
     } finally {
       setLoading(false)
     }
@@ -140,6 +147,15 @@ export default function Sales() {
 
         {loading ? (
           <AccordionSkeleton count={6} />
+        ) : paginatedOrders.length === 0 ? (
+          <Box sx={{ textAlign: 'center', py: 8 }}>
+            <Typography variant="h6" color="text.secondary">
+              No sales found
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              {searchTerm ? 'Try adjusting your search terms' : 'Sales will appear here once created'}
+            </Typography>
+          </Box>
         ) : (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
             {paginatedOrders.map((order) => (

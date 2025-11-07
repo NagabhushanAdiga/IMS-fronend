@@ -63,6 +63,7 @@ export const saleAPI = {
 // Return API
 export const returnAPI = {
   getAll: (params) => api.get('/returns', { params }),
+  getProducts: (params) => api.get('/returns/products', { params }), // Get products with returns
   create: (data) => api.post('/returns', data),
   getStats: () => api.get('/returns/stats'),
 };
