@@ -103,10 +103,6 @@ export default function Reports() {
 
   return (
     <Box>
-      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
-        Reports & Analytics
-      </Typography>
-
       {/* Key Metrics */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={3}>
@@ -114,7 +110,7 @@ export default function Reports() {
             <StatCardSkeleton />
           ) : (
             <StatCard
-              title="Total Sales"
+              title="Total sales"
               value={`₹${totalSales.toFixed(2)}`}
               change="+15.3%"
               isPositive={true}
@@ -138,7 +134,7 @@ export default function Reports() {
             <StatCardSkeleton />
           ) : (
             <StatCard
-              title="Total Products"
+              title="Total items"
               value={stats?.totalStockAdded || 0}
               change="+12.5%"
               isPositive={true}
@@ -194,15 +190,15 @@ export default function Reports() {
 
       {/* Top Products Cards */}
       <Paper sx={{ p: 3 }}>
-        <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
-          Top Selling Products
-        </Typography>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 2, fontSize: { xs: '1rem', sm: '1.125rem' } }}>
+              Top selling items
+            </Typography>
         {loading ? (
           <AccordionSkeleton count={5} />
         ) : topProducts.length === 0 ? (
           <Box sx={{ textAlign: 'center', py: 8 }}>
             <Typography variant="body2" color="text.secondary">
-              No product data available
+              No item data available
             </Typography>
           </Box>
         ) : (

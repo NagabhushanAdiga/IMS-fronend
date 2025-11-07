@@ -78,14 +78,11 @@ export default function Returns() {
   return (
     <Box>
       <Box sx={{ mb: 3 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>
-          Returns
-        </Typography>
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <Paper sx={{ p: 2 }}>
               <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 600 }}>
-                Total Returns
+                Total returns
               </Typography>
               {statsLoading ? (
                 <Skeleton variant="text" width={60} height={40} />
@@ -99,7 +96,7 @@ export default function Returns() {
           <Grid item xs={6}>
             <Paper sx={{ p: 2 }}>
               <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 600 }}>
-                Total Value
+                Total value
               </Typography>
               {statsLoading ? (
                 <Skeleton variant="text" width={80} height={40} />
@@ -120,6 +117,7 @@ export default function Returns() {
           placeholder="Search returns by name, SKU, or category..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          size="small"
           sx={{ mb: 3 }}
           InputProps={{
             startAdornment: (
@@ -128,6 +126,7 @@ export default function Returns() {
               </InputAdornment>
             ),
           }}
+          InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
         />
 
         {loading ? (
@@ -174,7 +173,7 @@ export default function Returns() {
                         </Grid>
                         <Grid item xs={6}>
                           <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                            Return Date
+                            Return date
                           </Typography>
                           <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                             {item.returnDate ? new Date(item.returnDate).toLocaleDateString() : item.date || 'N/A'}
@@ -182,7 +181,7 @@ export default function Returns() {
                         </Grid>
                         <Grid item xs={6}>
                           <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                            Unit Price
+                            Unit price
                           </Typography>
                           <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                             ₹{(item.price || 0).toFixed(2)}

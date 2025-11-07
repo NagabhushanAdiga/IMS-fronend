@@ -119,10 +119,6 @@ export default function Sales() {
 
   return (
     <Box>
-      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
-        Sales History
-      </Typography>
-
       <Paper sx={{ p: 3 }}>
         <TextField
           fullWidth
@@ -130,6 +126,7 @@ export default function Sales() {
           placeholder="Search sales by ID, customer, or email..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          size="small"
           sx={{ mb: 3 }}
           InputProps={{
             startAdornment: (
@@ -138,6 +135,7 @@ export default function Sales() {
               </InputAdornment>
             ),
           }}
+          InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
         />
 
         {loading ? (
@@ -180,7 +178,7 @@ export default function Sales() {
                   <Grid container spacing={1.5} sx={{ mb: 2 }}>
                     <Grid item xs={6}>
                       <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                        Number of Items
+                        Number of items
                       </Typography>
                       <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                         {order.items?.length || order.items || 0}
@@ -188,7 +186,7 @@ export default function Sales() {
                     </Grid>
                     <Grid item xs={6}>
                       <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                        Sale Date
+                        Sale date
                       </Typography>
                       <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                         {order.saleDate ? new Date(order.saleDate).toLocaleDateString() : order.date || 'N/A'}
@@ -203,7 +201,7 @@ export default function Sales() {
                       startIcon={<VisibilityIcon />}
                       onClick={() => handleViewOrder(order)}
                     >
-                      View Details
+                      View details
                     </Button>
                   </Box>
                 </Box>
@@ -227,7 +225,7 @@ export default function Sales() {
       </Paper>
 
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-        <DialogTitle>Sale Details</DialogTitle>
+        <DialogTitle>Sale details</DialogTitle>
         <DialogContent>
           {selectedOrder && (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
@@ -235,37 +233,49 @@ export default function Sales() {
                 label="Sale ID"
                 value={selectedOrder.saleId || selectedOrder.id || `SALE-${selectedOrder._id?.slice(-6)}`}
                 InputProps={{ readOnly: true }}
+                size="small"
                 fullWidth
+                InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
               />
               <TextField
-                label="Customer Name"
+                label="Customer name"
                 value={selectedOrder.customerName || selectedOrder.customer}
                 InputProps={{ readOnly: true }}
+                size="small"
                 fullWidth
+                InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
               />
               <TextField
                 label="Email"
                 value={selectedOrder.customerEmail || selectedOrder.email}
                 InputProps={{ readOnly: true }}
+                size="small"
                 fullWidth
+                InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
               />
               <TextField
-                label="Number of Items"
+                label="Number of items"
                 value={selectedOrder.items?.length || selectedOrder.items || 0}
                 InputProps={{ readOnly: true }}
+                size="small"
                 fullWidth
+                InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
               />
               <TextField
-                label="Total Amount"
+                label="Total amount"
                 value={`₹${(selectedOrder.totalAmount || selectedOrder.total || 0).toFixed(2)}`}
                 InputProps={{ readOnly: true }}
+                size="small"
                 fullWidth
+                InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
               />
               <TextField
-                label="Sale Date"
+                label="Sale date"
                 value={selectedOrder.saleDate ? new Date(selectedOrder.saleDate).toLocaleDateString() : selectedOrder.date || 'N/A'}
                 InputProps={{ readOnly: true }}
+                size="small"
                 fullWidth
+                InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
               />
               <TextField
                 label="Status"
@@ -273,7 +283,9 @@ export default function Sales() {
                 value={selectedOrder.status}
                 onChange={(e) => handleStatusChange(e.target.value)}
                 disabled={saving}
+                size="small"
                 fullWidth
+                InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
               >
                 {statusOptions.map((status) => (
                   <MenuItem key={status} value={status}>

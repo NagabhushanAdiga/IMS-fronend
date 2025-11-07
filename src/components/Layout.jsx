@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import {
   Box,
@@ -19,6 +19,7 @@ import {
   DialogActions,
   Button,
   DialogContentText,
+  Tooltip,
 } from '@mui/material'
 import {
   Menu as MenuIcon,
@@ -31,13 +32,16 @@ import {
   Assessment as AssessmentIcon,
   Settings as SettingsIcon,
   Logout as LogoutIcon,
+  Brightness4 as DarkModeIcon,
+  Brightness7 as LightModeIcon,
 } from '@mui/icons-material'
+import { ThemeContext } from '../context/ThemeContext'
 
 const drawerWidth = 240
 
 const menuItems = [
   { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-  { text: 'Products', icon: <InventoryIcon />, path: '/products' },
+  { text: 'Items', icon: <InventoryIcon />, path: '/products' },
   { text: 'Categories', icon: <CategoryIcon />, path: '/categories' },
   { text: 'Sales', icon: <ShoppingCartIcon />, path: '/sales' },
   { text: 'Returns', icon: <ReturnIcon />, path: '/returns' },
@@ -51,6 +55,7 @@ export default function Layout({ onLogout }) {
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
+  const { mode, toggleTheme } = useContext(ThemeContext)
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
@@ -126,7 +131,7 @@ export default function Layout({ onLogout }) {
       open={logoutDialogOpen}
       onClose={handleLogoutCancel}
     >
-      <DialogTitle>Confirm Logout</DialogTitle>
+      <DialogTitle>Confirm logout</DialogTitle>
       <DialogContent>
         <DialogContentText>
           Are you sure you want to logout?
@@ -160,9 +165,14 @@ export default function Layout({ onLogout }) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+            
           </Typography>
+          <Tooltip title={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}>
+            <IconButton color="inherit" onClick={toggleTheme} sx={{ ml: 1 }}>
+              {mode === 'light' ? <DarkModeIcon /> : <LightModeIcon />}
+            </IconButton>
+          </Tooltip>
         </Toolbar>
       </AppBar>
       <Box

@@ -172,19 +172,14 @@ export default function Settings() {
 
   return (
     <Box>
-      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
-        Settings
-      </Typography>
-
-
       <Grid container spacing={3}>
         {/* Profile Settings */}
         <Grid item xs={12}>
           <Paper sx={{ p: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
               <PersonIcon color="primary" />
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                Profile Information
+              <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.125rem' } }}>
+                Profile information
               </Typography>
             </Box>
             <Divider sx={{ mb: 3 }} />
@@ -226,7 +221,7 @@ export default function Settings() {
                       Administrator
                     </Typography>
                     <Button variant="outlined" size="small" sx={{ mt: 1 }} disabled>
-                      Change Avatar
+                      Change avatar
                     </Button>
                   </Box>
                 </Box>
@@ -235,10 +230,12 @@ export default function Settings() {
                   <Grid item xs={12} md={6}>
                     <TextField
                       fullWidth
-                      label="Full Name"
+                      label="Full name"
+                      size="small"
                       value={profileData.fullName}
                       onChange={(e) => setProfileData({ ...profileData, fullName: e.target.value })}
                       disabled={saving}
+                      InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
@@ -246,54 +243,66 @@ export default function Settings() {
                       fullWidth
                       label="Email"
                       type="email"
+                      size="small"
                       value={profileData.email}
                       onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
                       disabled={saving}
+                      InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
                       fullWidth
                       label="Phone"
+                      size="small"
                       value={profileData.phone}
                       onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
                       disabled={saving}
+                      InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
                       fullWidth
                       label="Company"
+                      size="small"
                       value={profileData.company}
                       onChange={(e) => setProfileData({ ...profileData, company: e.target.value })}
                       disabled={saving}
+                      InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
                     />
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
                       label="Address"
+                      size="small"
                       value={profileData.address}
                       onChange={(e) => setProfileData({ ...profileData, address: e.target.value })}
                       disabled={saving}
+                      InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
                       fullWidth
                       label="City"
+                      size="small"
                       value={profileData.city}
                       onChange={(e) => setProfileData({ ...profileData, city: e.target.value })}
                       disabled={saving}
+                      InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
                       fullWidth
                       label="Country"
+                      size="small"
                       value={profileData.country}
                       onChange={(e) => setProfileData({ ...profileData, country: e.target.value })}
                       disabled={saving}
+                      InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
                     />
                   </Grid>
                 </Grid>
@@ -305,7 +314,7 @@ export default function Settings() {
                     onClick={handleProfileSave}
                     disabled={saving}
                   >
-                    {saving ? 'Saving...' : 'Save Profile'}
+                    {saving ? 'Saving...' : 'Save profile'}
                   </Button>
                 </Box>
               </>
@@ -318,7 +327,7 @@ export default function Settings() {
           <Paper sx={{ p: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
               <SecurityIcon color="primary" />
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.125rem' } }}>
                 Security
               </Typography>
             </Box>
@@ -330,6 +339,7 @@ export default function Settings() {
                   fullWidth
                   label="Current PIN"
                   type="password"
+                  size="small"
                   value={pinData.currentPin}
                   onChange={(e) => setPinData({ ...pinData, currentPin: e.target.value })}
                   disabled={saving || loading}
@@ -340,6 +350,7 @@ export default function Settings() {
                     inputMode: 'numeric'
                   }}
                   helperText="Enter your current 4-digit PIN"
+                  InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -347,6 +358,7 @@ export default function Settings() {
                   fullWidth
                   label="New PIN"
                   type="password"
+                  size="small"
                   value={pinData.newPin}
                   onChange={(e) => setPinData({ ...pinData, newPin: e.target.value })}
                   disabled={saving || loading}
@@ -357,13 +369,15 @@ export default function Settings() {
                     inputMode: 'numeric'
                   }}
                   helperText="Enter new 4-digit PIN"
+                  InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Confirm New PIN"
+                  label="Confirm new PIN"
                   type="password"
+                  size="small"
                   value={pinData.confirmPin}
                   onChange={(e) => setPinData({ ...pinData, confirmPin: e.target.value })}
                   disabled={saving || loading}
@@ -374,6 +388,7 @@ export default function Settings() {
                     inputMode: 'numeric'
                   }}
                   helperText="Re-enter new PIN"
+                  InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
                 />
               </Grid>
             </Grid>
@@ -396,7 +411,7 @@ export default function Settings() {
           <Paper sx={{ p: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
               <NotificationsIcon color="primary" />
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.125rem' } }}>
                 Notifications
               </Typography>
             </Box>
@@ -410,7 +425,7 @@ export default function Settings() {
                     onChange={(e) => setNotifications({ ...notifications, emailNotifications: e.target.checked })}
                   />
                 }
-                label="Email Notifications"
+                label="Email notifications"
               />
               <FormControlLabel
                 control={
@@ -419,7 +434,7 @@ export default function Settings() {
                     onChange={(e) => setNotifications({ ...notifications, lowStockAlerts: e.target.checked })}
                   />
                 }
-                label="Low Stock Alerts"
+                label="Low stock alerts"
               />
               <FormControlLabel
                 control={
@@ -428,7 +443,7 @@ export default function Settings() {
                     onChange={(e) => setNotifications({ ...notifications, orderUpdates: e.target.checked })}
                   />
                 }
-                label="Order Updates"
+                label="Order updates"
               />
               <FormControlLabel
                 control={
@@ -437,7 +452,7 @@ export default function Settings() {
                     onChange={(e) => setNotifications({ ...notifications, weeklyReports: e.target.checked })}
                   />
                 }
-                label="Weekly Reports"
+                label="Weekly reports"
               />
               <FormControlLabel
                 control={
@@ -446,7 +461,7 @@ export default function Settings() {
                     onChange={(e) => setNotifications({ ...notifications, marketingEmails: e.target.checked })}
                   />
                 }
-                label="Marketing Emails"
+                label="Marketing emails"
               />
             </Box>
 
@@ -457,7 +472,7 @@ export default function Settings() {
                 onClick={handleNotificationsSave}
                 disabled={saving || loading}
               >
-                {saving ? 'Saving...' : 'Save Preferences'}
+                {saving ? 'Saving...' : 'Save preferences'}
               </Button>
             </Box>
           </Paper>

@@ -105,10 +105,6 @@ export default function Dashboard() {
 
   return (
     <Box>
-      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
-        Dashboard
-      </Typography>
-
       {/* Statistics Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={3}>
@@ -116,7 +112,7 @@ export default function Dashboard() {
             <StatCardSkeleton />
           ) : (
             <StatCard
-              title="Total Stock Added"
+              title="Total stock added"
               value={stats?.totalStockAdded || 0}
               icon={<Inventory sx={{ color: 'white', fontSize: 28 }} />}
               gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
@@ -170,8 +166,8 @@ export default function Dashboard() {
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
-              Low Stock Alerts
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 2, fontSize: { xs: '1rem', sm: '1.125rem' } }}>
+              Low stock alerts
             </Typography>
             {loading ? (
               <AccordionSkeleton count={4} />

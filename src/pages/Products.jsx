@@ -53,7 +53,6 @@ export default function Products() {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' })
   const [formData, setFormData] = useState({
     name: '',
-    sku: '',
     category: '',
     totalStock: '',
     sold: '0',
@@ -91,13 +90,19 @@ export default function Products() {
   const handleOpenDialog = (product = null) => {
     if (product) {
       setEditingProduct(product)
+      // Properly extract values from product for editing
       setFormData({
-        ...product,
-        category: product.category._id || product.category
+        name: product.name || '',
+        category: product.category?._id || product.category || '',
+        totalStock: product.totalStock?.toString() || '',
+        sold: product.sold?.toString() || '0',
+        returned: product.returned?.toString() || '0',
+        stock: '',
+        price: product.price?.toString() || ''
       })
     } else {
       setEditingProduct(null)
-      setFormData({ name: '', sku: '', category: '', totalStock: '', sold: '0', returned: '0', stock: '', price: '' })
+      setFormData({ name: '', category: '', totalStock: '', sold: '0', returned: '0', stock: '', price: '' })
     }
     setOpenDialog(true)
   }
@@ -105,20 +110,33 @@ export default function Products() {
   const handleCloseDialog = () => {
     setOpenDialog(false)
     setEditingProduct(null)
-    setFormData({ name: '', sku: '', category: '', totalStock: '', sold: '0', returned: '0', stock: '', price: '' })
+    setFormData({ name: '', category: '', totalStock: '', sold: '0', returned: '0', stock: '', price: '' })
   }
 
   const handleSave = async () => {
+    // Validation
+    if (!formData.name?.trim()) {
+      setSnackbar({ open: true, message: 'Item name is required', severity: 'error' })
+      return
+    }
+    if (!formData.category) {
+      setSnackbar({ open: true, message: 'Category is required', severity: 'error' })
+      return
+    }
+    if (!formData.totalStock || parseInt(formData.totalStock) < 0) {
+      setSnackbar({ open: true, message: 'Valid total stock is required', severity: 'error' })
+      return
+    }
+
     setSaving(true)
     try {
       const productData = {
-        name: formData.name,
-        sku: formData.sku,
+        name: formData.name.trim(),
         category: formData.category,
         totalStock: parseInt(formData.totalStock),
         sold: parseInt(formData.sold || 0),
         returned: parseInt(formData.returned || 0),
-        price: parseFloat(formData.price)
+        price: parseFloat(formData.price || 0)
       }
 
       if (editingProduct) {
@@ -126,18 +144,19 @@ export default function Products() {
       } else {
         await productAPI.create(productData)
       }
-      
+
       handleCloseDialog()
       fetchProducts()
       setSnackbar({
         open: true,
-        message: editingProduct ? 'Product updated successfully!' : 'Product added successfully!',
+        message: editingProduct ? 'Item updated successfully!' : 'Item added successfully!',
         severity: 'success'
       })
     } catch (error) {
+      console.error('Error saving product:', error)
       setSnackbar({
         open: true,
-        message: error.response?.data?.message || 'Error saving product',
+        message: error.response?.data?.message || 'Error saving item',
         severity: 'error'
       })
     } finally {
@@ -162,13 +181,13 @@ export default function Products() {
         fetchProducts()
         setSnackbar({
           open: true,
-          message: 'Product deleted successfully!',
+          message: 'Item deleted successfully!',
           severity: 'success'
         })
       } catch (error) {
         setSnackbar({
           open: true,
-          message: error.response?.data?.message || 'Error deleting product',
+          message: error.response?.data?.message || 'Error deleting item',
           severity: 'error'
         })
       } finally {
@@ -192,16 +211,16 @@ export default function Products() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-          Products
-        </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', mb: 3 }}>
         <Button
           variant="contained"
-          startIcon={<AddIcon />}
+          startIcon={<AddIcon sx={{ display: { xs: 'none', sm: 'inline-flex' } }} />}
           onClick={() => handleOpenDialog()}
+          size="small"
+          sx={{ fontSize: { xs: '0.8125rem', sm: '0.875rem' } }}
         >
-          Add Product
+          <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Add item</Box>
+          <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>Add</Box>
         </Button>
       </Box>
 
@@ -209,9 +228,10 @@ export default function Products() {
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Search products by name, SKU, or category..."
+          placeholder="Search items by name or category..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          size="small"
           sx={{ mb: 3 }}
           InputProps={{
             startAdornment: (
@@ -220,6 +240,7 @@ export default function Products() {
               </InputAdornment>
             ),
           }}
+          InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
         />
 
         {loading ? (
@@ -228,7 +249,7 @@ export default function Products() {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
             {paginatedProducts.map((product) => (
               <Accordion key={product._id}>
-                <AccordionSummary 
+                <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   sx={{ minHeight: '48px', '& .MuiAccordionSummary-content': { my: 1 } }}
                 >
@@ -237,13 +258,12 @@ export default function Products() {
                       <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                         {product.name}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                        {product.sku}
+                    </Box>
+                    {product.price && (
+                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'primary.main', minWidth: 60, textAlign: 'right' }}>
+                        ₹{product.price?.toFixed(2)}
                       </Typography>
-                  </Box>
-                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'primary.main', minWidth: 60, textAlign: 'right' }}>
-                    ₹{product.price?.toFixed(2)}
-                  </Typography>
+                    )}
                   </Box>
                 </AccordionSummary>
                 <AccordionDetails sx={{ pt: 1, pb: 2 }}>
@@ -259,64 +279,64 @@ export default function Products() {
                       />
                     </Box>
 
-                  <Grid container spacing={1.5} sx={{ mb: 2 }}>
-                    <Grid item xs={6} sm={3}>
-                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                        Total Stock
-                      </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                        {product.totalStock}
-                      </Typography>
+                    <Grid container spacing={1.5} sx={{ mb: 2 }}>
+                      <Grid item xs={6} sm={3}>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                          Total stock
+                        </Typography>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                          {product.totalStock}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6} sm={3}>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                          Sold
+                        </Typography>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'error.main' }}>
+                          {product.sold}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6} sm={3}>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                          Returned
+                        </Typography>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'warning.main' }}>
+                          {product.returned}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6} sm={3}>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                          Remaining
+                        </Typography>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'success.main' }}>
+                          {product.stock}
+                        </Typography>
+                      </Grid>
                     </Grid>
-                    <Grid item xs={6} sm={3}>
-                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                        Sold
-                      </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'error.main' }}>
-                        {product.sold}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6} sm={3}>
-                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                        Returned
-                      </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'warning.main' }}>
-                        {product.returned}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6} sm={3}>
-                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                        Remaining
-                      </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'success.main' }}>
-                        {product.stock}
-                      </Typography>
-                    </Grid>
-                  </Grid>
 
-                  <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      startIcon={<EditIcon />}
-                      onClick={() => handleOpenDialog(product)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      size="small"
-                      startIcon={<DeleteIcon />}
-                      onClick={() => handleDeleteClick(product)}
-                    >
-                      Delete
-                    </Button>
+                    <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        startIcon={<EditIcon />}
+                        onClick={() => handleOpenDialog(product)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        size="small"
+                        startIcon={<DeleteIcon />}
+                        onClick={() => handleDeleteClick(product)}
+                      >
+                        Delete
+                      </Button>
+                    </Box>
                   </Box>
-                </Box>
-              </AccordionDetails>
-            </Accordion>
-          ))}
+                </AccordionDetails>
+              </Accordion>
+            ))}
           </Box>
         )}
 
@@ -335,31 +355,28 @@ export default function Products() {
 
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
         <DialogTitle>
-          {editingProduct ? 'Edit Product' : 'Add New Product'}
+          {editingProduct ? 'Edit item' : 'Add new item'}
         </DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
             <TextField
-              label="Product Name"
+              label="Item name"
               fullWidth
               required
+              size="small"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            />
-            <TextField
-              label="SKU"
-              fullWidth
-              required
-              value={formData.sku}
-              onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+              InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
             />
             <TextField
               label="Category"
               fullWidth
               required
               select
+              size="small"
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
             >
               {categories.map((cat) => (
                 <MenuItem key={cat._id} value={cat._id}>
@@ -368,40 +385,46 @@ export default function Products() {
               ))}
             </TextField>
             <TextField
-              label="Total Stock"
+              label="Total stock"
               fullWidth
               required
               type="number"
+              size="small"
               value={formData.totalStock}
               onChange={(e) => setFormData({ ...formData, totalStock: e.target.value })}
               helperText="Initial total quantity added to inventory"
+              InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
             />
             <TextField
-              label="Items Sold"
+              label="Items sold"
               fullWidth
-              required
               type="number"
+              size="small"
               value={formData.sold}
               onChange={(e) => setFormData({ ...formData, sold: e.target.value })}
-              helperText="Number of items sold"
+              helperText="Number of items sold (optional)"
+              InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
             />
             <TextField
-              label="Items Returned"
+              label="Items returned"
               fullWidth
-              required
               type="number"
+              size="small"
               value={formData.returned}
               onChange={(e) => setFormData({ ...formData, returned: e.target.value })}
-              helperText="Number of items returned by customers"
+              helperText="Number of items returned by customers (optional)"
+              InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
             />
             <TextField
               label="Price"
               fullWidth
-              required
               type="number"
+              size="small"
               inputProps={{ step: '0.01' }}
               value={formData.price}
               onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+              helperText="Price per unit (optional)"
+              InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
             />
           </Box>
         </DialogContent>
@@ -414,7 +437,7 @@ export default function Products() {
       </Dialog>
 
       <Dialog open={deleteDialogOpen} onClose={handleDeleteCancel}>
-        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogTitle>Confirm delete</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Are you sure you want to delete "{productToDelete?.name}"? This action cannot be undone.
