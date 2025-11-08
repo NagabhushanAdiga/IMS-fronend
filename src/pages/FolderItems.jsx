@@ -143,7 +143,7 @@ export default function FolderItems() {
   const handleSave = async () => {
     // Validation
     if (!formData.name?.trim()) {
-      setSnackbar({ open: true, message: 'Item name is required', severity: 'error' })
+      setSnackbar({ open: true, message: 'Box name is required', severity: 'error' })
       return
     }
     if (!formData.category) {
@@ -157,7 +157,7 @@ export default function FolderItems() {
 
     setSaving(true)
     try {
-      const itemName = formData.name?.trim() || 'item'
+      const itemName = formData.name?.trim() || 'box'
       const timestamp = Date.now()
       const randomSuffix = Math.random().toString(36).substring(2, 7)
 
@@ -185,14 +185,14 @@ export default function FolderItems() {
       fetchItems()
       setSnackbar({
         open: true,
-        message: editingProduct ? 'Item updated successfully!' : 'Item added successfully!',
+        message: editingProduct ? 'Box updated successfully!' : 'Box added successfully!',
         severity: 'success'
       })
     } catch (error) {
       console.error('Error saving product:', error)
       setSnackbar({
         open: true,
-        message: error.response?.data?.message || 'Error saving item',
+        message: error.response?.data?.message || 'Error saving box',
         severity: 'error'
       })
     } finally {
@@ -213,13 +213,13 @@ export default function FolderItems() {
         fetchItems()
         setSnackbar({
           open: true,
-          message: 'Item deleted successfully!',
+          message: 'Box deleted successfully!',
           severity: 'success'
         })
       } catch (error) {
         setSnackbar({
           open: true,
-          message: error.response?.data?.message || 'Error deleting item',
+          message: error.response?.data?.message || 'Error deleting box',
           severity: 'error'
         })
       } finally {
@@ -310,7 +310,7 @@ export default function FolderItems() {
             size="small"
             sx={{ fontSize: { xs: '0.8125rem', sm: '0.875rem' } }}
           >
-            <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Add item</Box>
+            <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Add box</Box>
             <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>Add</Box>
           </Button>
         </Box>
@@ -323,7 +323,7 @@ export default function FolderItems() {
             <TextField
               fullWidth
               variant="outlined"
-              placeholder="Search items by name..."
+              placeholder="Search boxes by name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               size="small"
@@ -347,7 +347,7 @@ export default function FolderItems() {
               onChange={(e) => setFilter(e.target.value)}
               InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
             >
-              <MenuItem value="all">All items</MenuItem>
+              <MenuItem value="all">All boxes</MenuItem>
               <MenuItem value="inStock">In stock</MenuItem>
               <MenuItem value="lowStock">Low stock</MenuItem>
               <MenuItem value="outOfStock">Out of stock</MenuItem>
@@ -361,7 +361,7 @@ export default function FolderItems() {
       {/* Items Count and Filter Chips */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 2 }}>
         <Typography variant="body2" color="text.secondary">
-          Showing {filteredItems.length} of {items.length} {items.length === 1 ? 'item' : 'items'}
+          Showing {filteredItems.length} of {items.length} {items.length === 1 ? 'box' : 'boxes'}
         </Typography>
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
           <Chip
@@ -426,10 +426,10 @@ export default function FolderItems() {
           <Grid item xs={12}>
             <Paper sx={{ p: 8, textAlign: 'center' }}>
               <Typography variant="h6" color="text.secondary">
-                {items.length === 0 ? 'No items in this folder' : 'No items match your filters'}
+                {items.length === 0 ? 'No boxes in this folder' : 'No boxes match your filters'}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                {items.length === 0 ? 'Click "Add item" to add your first item' : 'Try adjusting your search or filters'}
+                {items.length === 0 ? 'Click "Add box" to add your first box' : 'Try adjusting your search or filters'}
               </Typography>
             </Paper>
           </Grid>
@@ -616,12 +616,12 @@ export default function FolderItems() {
       {/* Add/Edit Item Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
         <DialogTitle>
-          {editingProduct ? 'Edit item' : 'Add new item'}
+          {editingProduct ? 'Edit box' : 'Add new box'}
         </DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
             <TextField
-              label="Item name"
+              label="Box name"
               fullWidth
               required
               size="small"
@@ -636,7 +636,7 @@ export default function FolderItems() {
               value={folder?.name || 'Loading...'}
               InputProps={{ readOnly: true }}
               disabled
-              helperText="Items will be added to this folder"
+              helperText="Boxes will be added to this folder"
               InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
             />
             <TextField
@@ -651,23 +651,23 @@ export default function FolderItems() {
               InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
             />
             <TextField
-              label="Items sold"
+              label="Boxes sold"
               fullWidth
               type="number"
               size="small"
               value={formData.sold}
               onChange={(e) => setFormData({ ...formData, sold: e.target.value })}
-              helperText="Number of items sold (optional)"
+              helperText="Number of boxes sold (optional)"
               InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
             />
             <TextField
-              label="Items returned"
+              label="Boxes returned"
               fullWidth
               type="number"
               size="small"
               value={formData.returned}
               onChange={(e) => setFormData({ ...formData, returned: e.target.value })}
-              helperText="Number of items returned by customers (optional)"
+              helperText="Number of boxes returned by customers (optional)"
               InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
             />
             <TextField

@@ -34,6 +34,7 @@ import {
   Logout as LogoutIcon,
   Brightness4 as DarkModeIcon,
   Brightness7 as LightModeIcon,
+  Code as CodeIcon,
 } from '@mui/icons-material'
 import { ThemeContext } from '../context/ThemeContext'
 
@@ -41,13 +42,14 @@ const drawerWidth = 240
 
 const menuItems = [
   { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-  // { text: 'Items', icon: <InventoryIcon />, path: '/products' },
-  { text: 'Folder', icon: <CategoryIcon />, path: '/folder' },
-  { text: 'Sales', icon: <ShoppingCartIcon />, path: '/sales' },
-  { text: 'Returns', icon: <ReturnIcon />, path: '/returns' },
   { text: 'Search', icon: <SearchIcon />, path: '/search' },
+  // { text: 'Boxes', icon: <InventoryIcon />, path: '/products' },
+  { text: 'Folders', icon: <CategoryIcon />, path: '/folder' },
+  // { text: 'Sales', icon: <ShoppingCartIcon />, path: '/sales' },
+  { text: 'Returns', icon: <ReturnIcon />, path: '/returns' },
   { text: 'Reports', icon: <AssessmentIcon />, path: '/reports' },
   { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
+  { text: 'Developer', icon: <CodeIcon />, path: '/developer' },
 ]
 
 export default function Layout({ onLogout }) {

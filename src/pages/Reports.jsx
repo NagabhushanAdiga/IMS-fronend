@@ -6,51 +6,113 @@ import {
   Grid,
   Card,
   CardContent,
-  Chip,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Skeleton,
+  TextField,
+  MenuItem,
 } from '@mui/material'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { BarChart } from '@mui/x-charts/BarChart'
-import { LineChart } from '@mui/x-charts/LineChart'
-import { PieChart } from '@mui/x-charts/PieChart'
 import {
-  TrendingUp,
-  TrendingDown,
+  Inventory,
+  ShoppingCart,
+  AssignmentReturn,
 } from '@mui/icons-material'
-import { productAPI, categoryAPI, saleAPI } from '../services/api'
-import { StatCardSkeleton, AccordionSkeleton } from '../components/Loading'
+import { productAPI, categoryAPI } from '../services/api'
 
-const StatCard = ({ title, value, change, isPositive }) => (
-  <Card>
-    <CardContent sx={{ py: 2, px: 2, '&:last-child': { pb: 2 } }}>
-      <Typography color="textSecondary" gutterBottom variant="caption" sx={{ fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 600 }}>
-        {title}
-      </Typography>
-      <Typography variant="h5" component="div" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+const StatCard = ({ title, value, subtitle, icon, gradient }) => (
+  <Card 
+    sx={{ 
+      background: gradient,
+      minHeight: 140,
+      display: 'flex',
+      flexDirection: 'column',
+      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+      '&:hover': {
+        transform: 'translateY(-4px)',
+        boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
+      }
+    }}
+  >
+    <CardContent sx={{ py: 2.5, px: 2.5, flexGrow: 1, '&:last-child': { pb: 2.5 } }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
+        <Box sx={{ flex: 1 }}>
+          <Typography 
+            gutterBottom 
+            variant="caption" 
+            sx={{ 
+              fontSize: '0.75rem', 
+              textTransform: 'uppercase', 
+              fontWeight: 700,
+              color: 'rgba(255, 255, 255, 0.9)',
+              letterSpacing: '0.5px'
+            }}
+          >
+            {title}
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            background: 'rgba(255, 255, 255, 0.25)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: 2,
+            p: 1.25,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          }}
+        >
+          {icon}
+        </Box>
+      </Box>
+      <Typography 
+        variant="h4" 
+        component="div" 
+        sx={{ 
+          fontWeight: 'bold', 
+          mb: 0.5,
+          color: 'white',
+          textShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        }}
+      >
         {value}
       </Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-        {isPositive ? (
-          <TrendingUp sx={{ fontSize: 14, color: 'success.main' }} />
-        ) : (
-          <TrendingDown sx={{ fontSize: 14, color: 'error.main' }} />
-        )}
-        <Typography variant="caption" color={isPositive ? 'success.main' : 'error.main'}>
-          {change}
+      {subtitle && (
+        <Typography 
+          variant="body2" 
+          sx={{ 
+            color: 'rgba(255, 255, 255, 0.85)',
+            fontWeight: 500
+          }}
+        >
+          {subtitle}
         </Typography>
-      </Box>
+      )}
     </CardContent>
   </Card>
 )
 
 export default function Reports() {
+  // Get current month's start and end dates
+  const getCurrentMonthDates = () => {
+    const now = new Date()
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+    
+    const formatDate = (date) => {
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    }
+    
+    return {
+      start: formatDate(firstDay),
+      end: formatDate(lastDay)
+    }
+  }
+
   const [loading, setLoading] = useState(true)
-  const [stats, setStats] = useState(null)
-  const [topProducts, setTopProducts] = useState([])
   const [categories, setCategories] = useState([])
+  const [categoryFilter, setCategoryFilter] = useState('all')
+  const [allProducts, setAllProducts] = useState([])
 
   useEffect(() => {
     fetchReportsData()
@@ -59,27 +121,12 @@ export default function Reports() {
   const fetchReportsData = async () => {
     try {
       setLoading(true)
-      const [statsRes, productsRes, categoriesRes] = await Promise.all([
-        productAPI.getStats(),
-        productAPI.getAll({ limit: 100 }),
+      const [productsRes, categoriesRes] = await Promise.all([
+        productAPI.getAll({ limit: 1000 }),
         categoryAPI.getAll()
       ])
 
-      setStats(statsRes.data)
-
-      // Get top 5 products by sold quantity
-      const sortedProducts = productsRes.data.products
-        .sort((a, b) => (b.sold || 0) - (a.sold || 0))
-        .slice(0, 5)
-        .map((product, index) => ({
-          rank: index + 1,
-          name: product.name,
-          sold: product.sold || 0,
-          revenue: (product.sold || 0) * (product.price || 0),
-          _id: product._id
-        }))
-
-      setTopProducts(sortedProducts)
+      setAllProducts(productsRes.data.products || [])
       setCategories(categoriesRes.data)
     } catch (error) {
       console.error('Error fetching reports data:', error)
@@ -88,175 +135,124 @@ export default function Reports() {
     }
   }
 
-  // Calculate category distribution for pie chart
-  const categoryData = categories.map((cat, index) => ({
-    id: index,
-    value: cat.productCount || 0,
-    label: cat.name
-  })).filter(cat => cat.value > 0)
+  // Calculate current month statistics based on category filter
+  const getFilteredStats = () => {
+    let productsToCalculate = allProducts
 
-  // Calculate metrics
-  const totalSales = stats ? (stats.totalSold || 0) * 100 : 0 // Approximate
-  const avgOrder = topProducts.length > 0
-    ? topProducts.reduce((sum, p) => sum + p.revenue, 0) / topProducts.length
-    : 0
+    // Apply category filter if selected
+    if (categoryFilter !== 'all') {
+      productsToCalculate = productsToCalculate.filter(product => 
+        (product.category?._id || product.category) === categoryFilter
+      )
+    }
+
+    return {
+      totalBoxes: productsToCalculate.length,
+      soldBoxes: productsToCalculate.reduce((sum, product) => sum + (product.sold || 0), 0),
+      returnedBoxes: productsToCalculate.reduce((sum, product) => sum + (product.returned || 0), 0),
+      soldValue: productsToCalculate.reduce((sum, product) => sum + ((product.sold || 0) * (product.price || 0)), 0),
+      returnedValue: productsToCalculate.reduce((sum, product) => sum + ((product.returned || 0) * (product.price || 0)), 0),
+    }
+  }
+
+  const stats = getFilteredStats()
+  const selectedCategory = categories.find(cat => cat._id === categoryFilter)
+  const currentDate = new Date()
+  const monthName = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })
 
   return (
     <Box>
-      {/* Key Metrics */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={3}>
-          {loading ? (
-            <StatCardSkeleton />
-          ) : (
-            <StatCard
-              title="Total sales"
-              value={`₹${totalSales.toFixed(2)}`}
-              change="+15.3%"
-              isPositive={true}
-            />
-          )}
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          {loading ? (
-            <StatCardSkeleton />
-          ) : (
-            <StatCard
-              title="Average Order"
-              value={`₹${avgOrder.toFixed(2)}`}
-              change="+8.2%"
-              isPositive={true}
-            />
-          )}
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          {loading ? (
-            <StatCardSkeleton />
-          ) : (
-            <StatCard
-              title="Total items"
-              value={stats?.totalStockAdded || 0}
-              change="+12.5%"
-              isPositive={true}
-            />
-          )}
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          {loading ? (
-            <StatCardSkeleton />
-          ) : (
-            <StatCard
-              title="Items Sold"
-              value={stats?.totalSold || 0}
-              change="+5.7%"
-              isPositive={true}
-            />
-          )}
-        </Grid>
-      </Grid>
+      {/* Header with Month and Filter */}
+      <Paper sx={{ p: 3, mb: 4 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+          <Box>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
+              {monthName} Report
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+              {categoryFilter === 'all' ? 'All folders' : selectedCategory?.name || 'Selected Folder'}
+            </Typography>
+          </Box>
+          <TextField
+            label="Filter by folder"
+            select
+            size="small"
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            sx={{ minWidth: 200 }}
+            InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
+          >
+            <MenuItem value="all">All folders</MenuItem>
+            {categories.map((cat) => (
+              <MenuItem key={cat._id} value={cat._id}>
+                {cat.name}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Box>
+      </Paper>
 
-      {/* Charts */}
+      {/* Statistics Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} md={4}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
-              Category Distribution
-            </Typography>
-            {loading ? (
-              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 350 }}>
-                <Skeleton variant="circular" width={300} height={300} />
-              </Box>
-            ) : categoryData.length > 0 ? (
-              <PieChart
-                series={[
-                  {
-                    data: categoryData,
-                    highlightScope: { faded: 'global', highlighted: 'item' },
-                  },
-                ]}
-                height={350}
-              />
-            ) : (
-              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 350 }}>
-                <Typography variant="body2" color="text.secondary">
-                  No category data available
-                </Typography>
-              </Box>
-            )}
-          </Paper>
+          <StatCard
+            title="Total boxes"
+            value={stats.totalBoxes}
+            subtitle={categoryFilter === 'all' ? 'Across all folders' : `In ${selectedCategory?.name || 'folder'}`}
+            icon={<Inventory sx={{ color: 'white', fontSize: 32 }} />}
+            gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <StatCard
+            title="Boxes sold"
+            value={stats.soldBoxes}
+            subtitle={`Total value: ₹${stats.soldValue.toFixed(2)}`}
+            icon={<ShoppingCart sx={{ color: 'white', fontSize: 32 }} />}
+            gradient="linear-gradient(135deg, #11998e 0%, #38ef7d 100%)"
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <StatCard
+            title="Boxes returned"
+            value={stats.returnedBoxes}
+            subtitle={`Total value: ₹${stats.returnedValue.toFixed(2)}`}
+            icon={<AssignmentReturn sx={{ color: 'white', fontSize: 32 }} />}
+            gradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+          />
         </Grid>
       </Grid>
 
-
-      {/* Top Products Cards */}
+      {/* Summary Card */}
       <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 2, fontSize: { xs: '1rem', sm: '1.125rem' } }}>
-              Top selling items
-            </Typography>
-        {loading ? (
-          <AccordionSkeleton count={5} />
-        ) : topProducts.length === 0 ? (
-          <Box sx={{ textAlign: 'center', py: 8 }}>
-            <Typography variant="body2" color="text.secondary">
-              No item data available
-            </Typography>
-          </Box>
-        ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-            {topProducts.map((product) => (
-              <Accordion key={product._id}>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  sx={{ minHeight: '48px', '& .MuiAccordionSummary-content': { my: 1 } }}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%', pr: 2 }}>
-                    <Box
-                      sx={{
-                        width: 30,
-                        height: 30,
-                        borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <Typography variant="caption" sx={{ color: 'white', fontWeight: 'bold', fontSize: '0.75rem' }}>
-                        #{product.rank}
-                      </Typography>
-                    </Box>
-                    <Typography variant="body2" sx={{ fontWeight: 'bold', flex: 1 }}>
-                      {product.name}
-                    </Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'success.main' }}>
-                      ₹{product.revenue.toFixed(2)}
-                    </Typography>
-                  </Box>
-                </AccordionSummary>
-                <AccordionDetails sx={{ pt: 1, pb: 2 }}>
-                  <Grid container spacing={1.5}>
-                    <Grid item xs={6}>
-                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                        Units Sold
-                      </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                        {product.sold}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                        Total Revenue
-                      </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'success.main' }}>
-                        ₹{product.revenue.toFixed(2)}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                </AccordionDetails>
-              </Accordion>
-            ))}
-          </Box>
-        )}
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <Box sx={{ p: 2, bgcolor: 'rgba(16, 185, 129, 0.1)', borderRadius: 1, border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 600 }}>
+                Net performance (sold - returned)
+              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'success.main', mt: 0.5 }}>
+                {stats.soldBoxes - stats.returnedBoxes} boxes
+              </Typography>
+              <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'success.main' }}>
+                ₹{(stats.soldValue - stats.returnedValue).toFixed(2)}
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Box sx={{ p: 2, bgcolor: 'rgba(59, 130, 246, 0.1)', borderRadius: 1, border: '1px solid rgba(59, 130, 246, 0.2)' }}>
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 600 }}>
+                Return rate
+              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'info.main', mt: 0.5 }}>
+                {stats.soldBoxes > 0 ? ((stats.returnedBoxes / stats.soldBoxes) * 100).toFixed(1) : 0}%
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                {stats.returnedBoxes} of {stats.soldBoxes} boxes
+              </Typography>
+            </Box>
+          </Grid>
+        </Grid>
       </Paper>
     </Box>
   )

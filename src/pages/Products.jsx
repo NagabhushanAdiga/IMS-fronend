@@ -116,7 +116,7 @@ export default function Products() {
   const handleSave = async () => {
     // Validation
     if (!formData.name?.trim()) {
-      setSnackbar({ open: true, message: 'Item name is required', severity: 'error' })
+      setSnackbar({ open: true, message: 'Box name is required', severity: 'error' })
       return
     }
     if (!formData.category) {
@@ -161,7 +161,7 @@ export default function Products() {
       fetchProducts()
       setSnackbar({
         open: true,
-        message: editingProduct ? 'Item updated successfully!' : 'Item added successfully!',
+        message: editingProduct ? 'Box updated successfully!' : 'Box added successfully!',
         severity: 'success'
       })
     } catch (error) {
@@ -193,7 +193,7 @@ export default function Products() {
         fetchProducts()
         setSnackbar({
           open: true,
-          message: 'Item deleted successfully!',
+          message: 'Box deleted successfully!',
           severity: 'success'
         })
       } catch (error) {
@@ -231,7 +231,7 @@ export default function Products() {
           size="small"
           sx={{ fontSize: { xs: '0.8125rem', sm: '0.875rem' } }}
         >
-          <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Add item</Box>
+          <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Add box</Box>
           <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>Add</Box>
         </Button>
       </Box>
@@ -240,7 +240,7 @@ export default function Products() {
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Search items by name or folder..."
+          placeholder="Search boxes by name or folder..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           size="small"
@@ -367,12 +367,12 @@ export default function Products() {
 
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
         <DialogTitle>
-          {editingProduct ? 'Edit item' : 'Add new item'}
+          {editingProduct ? 'Edit box' : 'Add new box'}
         </DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
             <TextField
-              label="Item name"
+              label="Box name"
               fullWidth
               required
               size="small"
@@ -408,23 +408,23 @@ export default function Products() {
               InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
             />
             <TextField
-              label="Items sold"
+              label="Boxes sold"
               fullWidth
               type="number"
               size="small"
               value={formData.sold}
               onChange={(e) => setFormData({ ...formData, sold: e.target.value })}
-              helperText="Number of items sold (optional)"
+              helperText="Number of boxes sold (optional)"
               InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
             />
             <TextField
-              label="Items returned"
+              label="Boxes returned"
               fullWidth
               type="number"
               size="small"
               value={formData.returned}
               onChange={(e) => setFormData({ ...formData, returned: e.target.value })}
-              helperText="Number of items returned by customers (optional)"
+              helperText="Number of boxes returned by customers (optional)"
               InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
             />
             <TextField

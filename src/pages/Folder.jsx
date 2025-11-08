@@ -251,70 +251,263 @@ export default function Folder() {
                     height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
-                    borderTop: `15px solid ${borderColors[index % borderColors.length]}`,
+                    borderRadius: 3,
                     cursor: 'pointer',
-                    transition: 'all 0.2s ease-in-out',
-                    '&:hover': {
-                      transform: 'translateY(-4px)',
-                      boxShadow: 4,
+                    position: 'relative',
+                    overflow: 'visible',
+                    background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+                    border: '1px solid rgba(0,0,0,0.08)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                    // Hover effects only on desktop (md and up)
+                    '@media (hover: hover)': {
+                      '&:hover': {
+                        transform: 'translateY(-12px) scale(1.02)',
+                        boxShadow: `0 20px 40px ${borderColors[index % borderColors.length]}30`,
+                        border: `1px solid ${borderColors[index % borderColors.length]}40`,
+                        '& .action-buttons': {
+                          opacity: 1,
+                          transform: 'translateY(0)',
+                        },
+                        '& .category-icon': {
+                          transform: 'scale(1.15) rotate(-5deg)',
+                          boxShadow: '0 8px 20px rgba(0,0,0,0.25)',
+                        },
+                        '& .gradient-overlay': {
+                          opacity: 0.08,
+                        },
+                        '& .count-badge': {
+                          transform: 'scale(1.1)',
+                        }
+                      },
+                    },
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: '100%',
+                      background: gradients[index % gradients.length],
+                      opacity: 0,
+                      transition: 'opacity 0.4s ease',
+                      borderRadius: 3,
+                      zIndex: 0,
+                    },
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '6px',
+                      background: gradients[index % gradients.length],
+                      borderRadius: '12px 12px 0 0',
                     }
                   }}
                   onClick={() => handleCardClick(category)}
                 >
-                  <CardContent sx={{ flexGrow: 1, py: 2, px: 2, '&:last-child': { pb: 2 } }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
+                  {/* Gradient Overlay */}
+                  <Box 
+                    className="gradient-overlay"
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      background: gradients[index % gradients.length],
+                      opacity: 0,
+                      transition: 'opacity 0.4s ease',
+                      zIndex: 0,
+                      borderRadius: 3,
+                    }}
+                  />
+
+                  <CardContent sx={{ position: 'relative', zIndex: 1, flexGrow: 1, py: { xs: 2, md: 3 }, px: { xs: 2, md: 3 }, '&:last-child': { pb: { xs: 2, md: 3 } } }}>
+                    {/* Decorative Circle */}
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        top: -30,
+                        right: -30,
+                        width: 120,
+                        height: 120,
+                        borderRadius: '50%',
+                        background: gradients[index % gradients.length],
+                        opacity: 0.05,
+                        zIndex: 0,
+                      }}
+                    />
+
+                    {/* Header with Icon and Name */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2.5, position: 'relative', zIndex: 1 }}>
                       <Box
+                        className="category-icon"
                         sx={{
                           background: gradients[index % gradients.length],
-                          borderRadius: 1.5,
-                          p: 0.75,
+                          borderRadius: 2.5,
+                          p: { xs: 1.25, md: 1.5 },
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
+                          boxShadow: `0 8px 16px ${borderColors[index % borderColors.length]}40`,
+                          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                          minWidth: { xs: 48, md: 56 },
+                          height: { xs: 48, md: 56 },
+                          position: 'relative',
+                          '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            inset: -3,
+                            borderRadius: 2.5,
+                            background: gradients[index % gradients.length],
+                            opacity: 0.2,
+                            zIndex: -1,
+                          }
                         }}
                       >
-                        <CategoryIcon sx={{ color: 'white', fontSize: 20 }} />
+                        <CategoryIcon sx={{ color: 'white', fontSize: { xs: 24, md: 28 } }} />
                       </Box>
-                      <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>
-                        {category.name}
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography 
+                          variant="h6" 
+                          component="div" 
+                          sx={{ 
+                            fontWeight: 'bold',
+                            mb: 0.5,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            fontSize: '1.25rem',
+                            color: 'text.primary'
+                          }}
+                        >
+                          {category.name}
+                        </Typography>
+                        <Typography 
+                          variant="body2" 
+                          color="text.secondary" 
+                          sx={{ 
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            fontSize: '0.8rem',
+                            lineHeight: 1.5,
+                            opacity: 0.8
+                          }}
+                        >
+                          {category.description}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    
+                    {/* Stats Section with Badge */}
+                    <Box 
+                      className="count-badge"
+                      sx={{ 
+                        background: `linear-gradient(135deg, ${borderColors[index % borderColors.length]}15 0%, ${borderColors[index % borderColors.length]}05 100%)`,
+                        borderRadius: 2,
+                        p: { xs: 2, md: 2.5 },
+                        mb: 2,
+                        textAlign: 'center',
+                        border: `2px solid ${borderColors[index % borderColors.length]}20`,
+                        transition: 'all 0.3s ease',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: -2,
+                          left: -2,
+                          right: -2,
+                          height: 2,
+                          background: gradients[index % gradients.length],
+                        }
+                      }}
+                    >
+                      <Typography 
+                        sx={{ 
+                          fontWeight: 'bold',
+                          fontSize: { xs: '2.5rem', md: '3rem' },
+                          background: gradients[index % gradients.length],
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                          mb: 0.5,
+                          lineHeight: 1
+                        }}
+                      >
+                        {category.productCount}
+                      </Typography>
+                      <Typography 
+                        variant="caption" 
+                        sx={{ 
+                          textTransform: 'uppercase',
+                          fontWeight: 700,
+                          letterSpacing: '1px',
+                          fontSize: { xs: '0.7rem', md: '0.75rem' },
+                          color: borderColors[index % borderColors.length],
+                        }}
+                      >
+                        Boxes in folder
                       </Typography>
                     </Box>
-                    <Typography variant="caption" color="text.secondary" sx={{ mb: 1.5, display: 'block' }}>
-                      {category.description}
-                    </Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Box>
-                        <Typography variant="h5" color="primary" sx={{ fontWeight: 'bold' }}>
-                          {category.productCount}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          Items
-                        </Typography>
-                      </Box>
-                      <Box>
-                        <IconButton
-                          color="primary"
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleOpenDialog(category)
-                          }}
-                          sx={{ p: 0.5 }}
-                        >
-                          <EditIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                          color="error"
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleDeleteClick(category)
-                          }}
-                          sx={{ p: 0.5 }}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </Box>
+
+                    {/* Action Buttons - Always visible on mobile, hover on desktop */}
+                    <Box 
+                      className="action-buttons"
+                      sx={{ 
+                        display: 'flex', 
+                        gap: 1,
+                        // Always visible on mobile
+                        opacity: { xs: 1, md: 0 },
+                        transform: { xs: 'translateY(0)', md: 'translateY(10px)' },
+                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+                      }}
+                    >
+                      <IconButton
+                        color="primary"
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleOpenDialog(category)
+                        }}
+                        sx={{ 
+                          bgcolor: 'primary.main',
+                          color: 'white',
+                          p: 0.75,
+                          '&:hover': {
+                            bgcolor: 'primary.dark',
+                            transform: 'scale(1.05)',
+                          },
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleDeleteClick(category)
+                        }}
+                        sx={{ 
+                          bgcolor: 'rgba(0,0,0,0.05)',
+                          color: 'error.main',
+                          border: '1px solid rgba(0,0,0,0.1)',
+                          p: 0.75,
+                          '&:hover': {
+                            bgcolor: 'error.main',
+                            color: 'white',
+                            transform: 'scale(1.05)',
+                          },
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
                     </Box>
                   </CardContent>
                 </Card>

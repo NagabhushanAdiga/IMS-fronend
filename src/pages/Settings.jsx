@@ -6,11 +6,9 @@ import {
   Grid,
   TextField,
   Button,
-  Divider,
   Switch,
   FormControlLabel,
   Avatar,
-  Alert,
   CircularProgress,
   Skeleton,
 } from '@mui/material'
@@ -170,30 +168,94 @@ export default function Settings() {
     }
   }
 
+  const gradients = [
+    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    'linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%)',
+  ]
+
   return (
     <Box>
+      {/* Hero Section with User Info */}
+      {!loading && (
+        <Paper 
+          sx={{ 
+            p: 4, 
+            mb: 4, 
+            background: gradients[0],
+            color: 'white',
+            borderRadius: 3,
+            position: 'relative',
+            overflow: 'hidden',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: -50,
+              right: -50,
+              width: 200,
+              height: 200,
+              borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.1)',
+            }
+          }}
+        >
+          <Grid container spacing={3} alignItems="center">
+            <Grid item>
+              <Avatar 
+                sx={{ 
+                  width: { xs: 80, md: 100 }, 
+                  height: { xs: 80, md: 100 },
+                  border: '4px solid rgba(255, 255, 255, 0.3)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+                  fontSize: '2.5rem',
+                  fontWeight: 'bold',
+                  background: 'rgba(255, 255, 255, 0.2)',
+                }}
+              >
+                {profileData.fullName ? profileData.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : 'U'}
+              </Avatar>
+            </Grid>
+            <Grid item xs>
+              <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 0.5, fontSize: { xs: '1.5rem', md: '2rem' } }}>
+                {profileData.fullName || 'User'}
+              </Typography>
+              <Typography variant="h6" sx={{ mb: 1, opacity: 0.95, fontSize: { xs: '1rem', md: '1.25rem' } }}>
+                Administrator
+              </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                {profileData.email}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Paper>
+      )}
+
       <Grid container spacing={3}>
         {/* Profile Settings */}
         <Grid item xs={12}>
-          <Paper sx={{ p: 3 }}>
+          <Paper sx={{ p: 3, borderRadius: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-              <PersonIcon color="primary" />
+              <Box
+                sx={{
+                  background: gradients[0],
+                  borderRadius: 2,
+                  p: 1.25,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+                }}
+              >
+                <PersonIcon sx={{ color: 'white', fontSize: 24 }} />
+              </Box>
               <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.125rem' } }}>
                 Profile information
               </Typography>
             </Box>
-            <Divider sx={{ mb: 3 }} />
 
             {loading ? (
               <>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 3 }}>
-                  <Skeleton variant="circular" width={100} height={100} />
-                  <Box>
-                    <Skeleton variant="text" width={150} height={32} />
-                    <Skeleton variant="text" width={120} height={24} />
-                    <Skeleton variant="rectangular" width={120} height={32} sx={{ mt: 1, borderRadius: 1 }} />
-                  </Box>
-                </Box>
                 <Grid container spacing={2}>
                   {Array.from({ length: 6 }).map((_, index) => (
                     <Grid item xs={12} md={index === 4 ? 12 : 6} key={index}>
@@ -204,27 +266,6 @@ export default function Settings() {
               </>
             ) : (
               <>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 3 }}>
-                  <Avatar
-                    sx={{
-                      width: 100,
-                      height: 100,
-                      bgcolor: 'primary.main',
-                      fontSize: '2rem',
-                    }}
-                  >
-                    {profileData.fullName ? profileData.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : 'U'}
-                  </Avatar>
-                  <Box>
-                    <Typography variant="h6">{profileData.fullName || 'User'}</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Administrator
-                    </Typography>
-                    <Button variant="outlined" size="small" sx={{ mt: 1 }} disabled>
-                      Change avatar
-                    </Button>
-                  </Box>
-                </Box>
 
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6}>
@@ -310,9 +351,20 @@ export default function Settings() {
                 <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
                   <Button
                     variant="contained"
+                    size="large"
                     startIcon={saving ? <CircularProgress size={20} color="inherit" /> : <SaveIcon />}
                     onClick={handleProfileSave}
                     disabled={saving}
+                    sx={{
+                      background: gradients[0],
+                      px: 4,
+                      py: 1.25,
+                      fontWeight: 600,
+                      boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+                      '&:hover': {
+                        boxShadow: '0 6px 16px rgba(102, 126, 234, 0.4)',
+                      }
+                    }}
                   >
                     {saving ? 'Saving...' : 'Save profile'}
                   </Button>
@@ -324,14 +376,25 @@ export default function Settings() {
 
         {/* Security Settings */}
         <Grid item xs={12}>
-          <Paper sx={{ p: 3 }}>
+          <Paper sx={{ p: 3, borderRadius: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-              <SecurityIcon color="primary" />
+              <Box
+                sx={{
+                  background: gradients[1],
+                  borderRadius: 2,
+                  p: 1.25,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 4px 12px rgba(17, 153, 142, 0.3)',
+                }}
+              >
+                <SecurityIcon sx={{ color: 'white', fontSize: 24 }} />
+              </Box>
               <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.125rem' } }}>
                 Security
               </Typography>
             </Box>
-            <Divider sx={{ mb: 3 }} />
 
             <Grid container spacing={2}>
               <Grid item xs={12}>
@@ -396,9 +459,20 @@ export default function Settings() {
             <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
               <Button
                 variant="contained"
+                size="large"
                 startIcon={saving ? <CircularProgress size={20} color="inherit" /> : <SaveIcon />}
                 onClick={handlePinChange}
                 disabled={saving || loading}
+                sx={{
+                  background: gradients[1],
+                  px: 4,
+                  py: 1.25,
+                  fontWeight: 600,
+                  boxShadow: '0 4px 12px rgba(17, 153, 142, 0.3)',
+                  '&:hover': {
+                    boxShadow: '0 6px 16px rgba(17, 153, 142, 0.4)',
+                  }
+                }}
               >
                 {saving ? 'Changing...' : 'Change PIN'}
               </Button>
@@ -408,14 +482,25 @@ export default function Settings() {
 
         {/* Notification Settings */}
         <Grid item xs={12}>
-          <Paper sx={{ p: 3 }}>
+          <Paper sx={{ p: 3, borderRadius: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-              <NotificationsIcon color="primary" />
+              <Box
+                sx={{
+                  background: gradients[2],
+                  borderRadius: 2,
+                  p: 1.25,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 4px 12px rgba(240, 147, 251, 0.3)',
+                }}
+              >
+                <NotificationsIcon sx={{ color: 'white', fontSize: 24 }} />
+              </Box>
               <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.125rem' } }}>
                 Notifications
               </Typography>
             </Box>
-            <Divider sx={{ mb: 3 }} />
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <FormControlLabel
@@ -468,9 +553,20 @@ export default function Settings() {
             <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
               <Button
                 variant="contained"
+                size="large"
                 startIcon={saving ? <CircularProgress size={20} color="inherit" /> : <SaveIcon />}
                 onClick={handleNotificationsSave}
                 disabled={saving || loading}
+                sx={{
+                  background: gradients[2],
+                  px: 4,
+                  py: 1.25,
+                  fontWeight: 600,
+                  boxShadow: '0 4px 12px rgba(240, 147, 251, 0.3)',
+                  '&:hover': {
+                    boxShadow: '0 6px 16px rgba(240, 147, 251, 0.4)',
+                  }
+                }}
               >
                 {saving ? 'Saving...' : 'Save preferences'}
               </Button>

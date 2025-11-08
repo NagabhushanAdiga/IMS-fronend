@@ -15,6 +15,7 @@ import Returns from './pages/Returns'
 import Search from './pages/Search'
 import Reports from './pages/Reports'
 import Settings from './pages/Settings'
+import Developer from './pages/Developer'
 
 function AppContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -64,6 +65,7 @@ function AppContent() {
           <Route path="search" element={<Search />} />
           <Route path="reports" element={<Reports />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="developer" element={<Developer />} />
         </Route>
       </Routes>
     </Router>
