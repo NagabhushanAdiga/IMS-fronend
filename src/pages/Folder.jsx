@@ -40,7 +40,7 @@ export default function Folder() {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' })
   const [formData, setFormData] = useState({
     name: '',
-    description: '',
+    description: 'Configure folder',
   })
 
   useEffect(() => {
@@ -65,7 +65,7 @@ export default function Folder() {
       setFormData({ name: category.name, description: category.description })
     } else {
       setEditingCategory(null)
-      setFormData({ name: '', description: '' })
+      setFormData({ name: '', description: 'Configure folders' })
     }
     setOpenDialog(true)
   }
@@ -73,7 +73,7 @@ export default function Folder() {
   const handleCloseDialog = () => {
     setOpenDialog(false)
     setEditingCategory(null)
-    setFormData({ name: '', description: '' })
+    setFormData({ name: '', description: 'Configure folders' })
   }
 
   const handleSave = async () => {
@@ -246,7 +246,7 @@ export default function Folder() {
             ]
             return (
               <Grid item xs={12} sm={6} md={4} key={category._id || category.id}>
-                <Card 
+                <Card
                   sx={{
                     height: '100%',
                     display: 'flex',
@@ -359,8 +359,8 @@ export default function Folder() {
         </DialogActions>
       </Dialog>
 
-      <Dialog 
-        open={deleteDialogOpen} 
+      <Dialog
+        open={deleteDialogOpen}
         onClose={handleDeleteCancel}
         PaperProps={{
           sx: {

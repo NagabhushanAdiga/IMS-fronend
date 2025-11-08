@@ -458,25 +458,47 @@ export default function FolderItems() {
                     height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
-                    borderTop: `15px solid ${borderColors[index % borderColors.length]}`,
+                    borderTop: `4px solid ${borderColors[index % borderColors.length]}`,
+                    position: 'relative',
+                    overflow: 'visible',
+                    transition: 'all 0.3s ease-in-out',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
+                      '& .action-buttons': {
+                        opacity: 1,
+                      }
+                    }
                   }}
                 >
-                  <CardContent sx={{ flexGrow: 1, py: 2, px: 2, '&:last-child': { pb: 2 } }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
+                  <CardContent sx={{ flexGrow: 1, py: 1.5, px: 2, '&:last-child': { pb: 1.5 } }}>
+                    {/* Header with Icon and Name */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                       <Box
                         sx={{
                           background: gradients[index % gradients.length],
                           borderRadius: 1.5,
-                          p: 0.75,
+                          p: 0.6,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                         }}
                       >
-                        <InventoryIcon sx={{ color: 'white', fontSize: 20 }} />
+                        <InventoryIcon sx={{ color: 'white', fontSize: 18 }} />
                       </Box>
-                      <Box sx={{ flex: 1 }}>
-                        <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'bold' }}>
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography
+                          variant="body2"
+                          component="div"
+                          sx={{
+                            fontWeight: 'bold',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            fontSize: '0.9rem'
+                          }}
+                        >
                           {product.name}
                         </Typography>
                       </Box>
@@ -484,66 +506,104 @@ export default function FolderItems() {
                         label={product.status}
                         color={getStatusColor(product.status)}
                         size="small"
+                        sx={{ fontWeight: 600, fontSize: '0.7rem' }}
                       />
                     </Box>
 
-                    <Grid container spacing={1} sx={{ mb: 1.5 }}>
-                      <Grid item xs={6}>
-                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                          Total stock
-                        </Typography>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: '1rem' }}>
-                          {product.totalStock || 0}
-                        </Typography>
+                    {/* Stats Grid with Background */}
+                    <Box
+                      sx={{
+                        bgcolor: 'rgba(0,0,0,0.02)',
+                        borderRadius: 1,
+                        p: 1,
+                        mb: 1
+                      }}
+                    >
+                      <Grid container spacing={0.5}>
+                        <Grid item xs={3}>
+                          <Box sx={{ textAlign: 'center' }}>
+                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.6rem', textTransform: 'uppercase', fontWeight: 600 }}>
+                              Total
+                            </Typography>
+                            <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: '1rem', color: 'text.primary' }}>
+                              {product.totalStock || 0}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Box sx={{ textAlign: 'center' }}>
+                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.6rem', textTransform: 'uppercase', fontWeight: 600 }}>
+                              Sold
+                            </Typography>
+                            <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: '1rem', color: 'error.main' }}>
+                              {product.sold || 0}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Box sx={{ textAlign: 'center' }}>
+                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.6rem', textTransform: 'uppercase', fontWeight: 600 }}>
+                              Return
+                            </Typography>
+                            <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: '1rem', color: 'warning.main' }}>
+                              {product.returned || 0}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Box sx={{ textAlign: 'center' }}>
+                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.6rem', textTransform: 'uppercase', fontWeight: 600 }}>
+                              Stock
+                            </Typography>
+                            <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: '1rem', color: 'success.main' }}>
+                              {product.stock || 0}
+                            </Typography>
+                          </Box>
+                        </Grid>
                       </Grid>
-                      <Grid item xs={6}>
-                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                          Sold
-                        </Typography>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: '1rem', color: 'error.main' }}>
-                          {product.sold || 0}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                          Returned
-                        </Typography>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: '1rem', color: 'warning.main' }}>
-                          {product.returned || 0}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                          In stock
-                        </Typography>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: '1rem', color: 'success.main' }}>
-                          {product.stock || 0}
-                        </Typography>
-                      </Grid>
-                    </Grid>
+                    </Box>
 
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Box sx={{ flex: 1 }}>
-                        {/* Empty space for balance */}
-                      </Box>
-                      <Box>
-                        <IconButton
-                          color="primary"
-                          size="small"
-                          onClick={() => handleOpenDialog(product)}
-                          sx={{ p: 0.5 }}
-                        >
-                          <EditIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                          color="error"
-                          size="small"
-                          onClick={() => handleDeleteClick(product)}
-                          sx={{ p: 0.5 }}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </Box>
+                    {/* Action Buttons */}
+                    <Box
+                      className="action-buttons"
+                      sx={{
+                        display: 'flex',
+                        gap: 0.75,
+                        opacity: 0.7,
+                        transition: 'opacity 0.3s ease'
+                      }}
+                    >
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        startIcon={<EditIcon sx={{ fontSize: 14 }} />}
+                        onClick={() => handleOpenDialog(product)}
+                        sx={{
+                          textTransform: 'none',
+                          fontSize: '0.7rem',
+                          py: 0.3,
+                          minHeight: 0
+                        }}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        size="small"
+                        fullWidth
+                        startIcon={<DeleteIcon sx={{ fontSize: 14 }} />}
+                        onClick={() => handleDeleteClick(product)}
+                        sx={{
+                          textTransform: 'none',
+                          fontSize: '0.7rem',
+                          py: 0.3,
+                          minHeight: 0
+                        }}
+                      >
+                        Delete
+                      </Button>
                     </Box>
                   </CardContent>
                 </Card>
