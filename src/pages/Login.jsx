@@ -76,10 +76,9 @@ export default function Login({ onLogin }) {
             Soni Traders
           </Typography>
           <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
-            Inventory Management System
+            Kanakagiri, Karnataka 583283
           </Typography>
-
-          <Grid container spacing={3} sx={{ mt: 4 }}>
+          {/* <Grid container spacing={3} sx={{ mt: 4 }}>
             <Grid item xs={12} sm={6}>
               <Box sx={{ textAlign: 'center' }}>
                 <TrendingUp sx={{ fontSize: 48, mb: 1 }} />
@@ -102,7 +101,7 @@ export default function Login({ onLogin }) {
                 </Typography>
               </Box>
             </Grid>
-          </Grid>
+          </Grid> */}
         </Box>
       </Grid>
 
