@@ -123,10 +123,6 @@ export default function Products() {
       setSnackbar({ open: true, message: 'Folder is required', severity: 'error' })
       return
     }
-    if (!formData.totalStock || parseInt(formData.totalStock) < 0) {
-      setSnackbar({ open: true, message: 'Valid total stock is required', severity: 'error' })
-      return
-    }
 
     setSaving(true)
     try {
@@ -143,7 +139,7 @@ export default function Products() {
         name: itemName,
         sku: uniqueSku,
         category: formData.category,
-        totalStock: parseInt(formData.totalStock),
+        totalStock: parseInt(formData.totalStock || 0),
         sold: parseInt(formData.sold || 0),
         returned: parseInt(formData.returned || 0),
         price: parseFloat(formData.price || 0)
@@ -399,12 +395,11 @@ export default function Products() {
             <TextField
               label="Total stock"
               fullWidth
-              required
               type="number"
               size="small"
               value={formData.totalStock}
               onChange={(e) => setFormData({ ...formData, totalStock: e.target.value })}
-              helperText="Initial total quantity added to inventory"
+              helperText="Initial total quantity added to inventory (optional)"
               InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
             />
             <TextField

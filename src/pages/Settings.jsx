@@ -177,7 +177,6 @@ export default function Settings() {
 
   return (
     <Box>
-      {/* Hero Section with User Info */}
       {!loading && (
         <Paper 
           sx={{ 
@@ -232,8 +231,7 @@ export default function Settings() {
       )}
 
       <Grid container spacing={3}>
-        {/* Profile Settings */}
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <Paper sx={{ p: 3, borderRadius: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
               <Box
@@ -372,9 +370,8 @@ export default function Settings() {
               </>
             )}
           </Paper>
-        </Grid>
+        </Grid> */}
 
-        {/* Security Settings */}
         <Grid item xs={12}>
           <Paper sx={{ p: 3, borderRadius: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
@@ -479,8 +476,7 @@ export default function Settings() {
             </Box>
           </Paper>
         </Grid>
-
-        {/* Notification Settings */}
+{/* 
         <Grid item xs={12}>
           <Paper sx={{ p: 3, borderRadius: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
@@ -572,7 +568,7 @@ export default function Settings() {
               </Button>
             </Box>
           </Paper>
-        </Grid>
+        </Grid> */}
       </Grid>
 
       <CustomSnackbar
