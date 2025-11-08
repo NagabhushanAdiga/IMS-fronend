@@ -41,8 +41,8 @@ const drawerWidth = 240
 
 const menuItems = [
   { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-  { text: 'Items', icon: <InventoryIcon />, path: '/products' },
-  { text: 'Categories', icon: <CategoryIcon />, path: '/categories' },
+  // { text: 'Items', icon: <InventoryIcon />, path: '/products' },
+  { text: 'Folder', icon: <CategoryIcon />, path: '/folder' },
   { text: 'Sales', icon: <ShoppingCartIcon />, path: '/sales' },
   { text: 'Returns', icon: <ReturnIcon />, path: '/returns' },
   { text: 'Search', icon: <SearchIcon />, path: '/search' },
@@ -166,7 +166,7 @@ export default function Layout({ onLogout }) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            
+
           </Typography>
           <Tooltip title={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}>
             <IconButton color="inherit" onClick={toggleTheme} sx={{ ml: 1 }}>

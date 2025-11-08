@@ -345,7 +345,7 @@ export default function Search() {
                             {item.name}
                           </Typography>
                           <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                            {item.category?.name || item.category}
+                            {item.category?.name || item.category || 'No folder'}
                           </Typography>
                         </Box>
                         {item.price && (

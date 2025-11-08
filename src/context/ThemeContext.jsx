@@ -146,6 +146,13 @@ export const ThemeProvider = ({ children }) => {
               },
             },
           },
+          MuiChip: {
+            styleOverrides: {
+              root: {
+                borderRadius: '5px',
+              },
+            },
+          },
         },
       }),
     [mode]

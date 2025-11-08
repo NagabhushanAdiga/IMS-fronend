@@ -8,7 +8,8 @@ import Layout from './components/Layout'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Products from './pages/Products'
-import Categories from './pages/Categories'
+import Folder from './pages/Folder'
+import FolderItems from './pages/FolderItems'
 import Sales from './pages/Sales'
 import Returns from './pages/Returns'
 import Search from './pages/Search'
@@ -56,7 +57,8 @@ function AppContent() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="products" element={<Products />} />
-          <Route path="categories" element={<Categories />} />
+          <Route path="folder" element={<Folder />} />
+          <Route path="folder/:folderId" element={<FolderItems />} />
           <Route path="sales" element={<Sales />} />
           <Route path="returns" element={<Returns />} />
           <Route path="search" element={<Search />} />

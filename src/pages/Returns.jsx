@@ -105,7 +105,7 @@ export default function Returns() {
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Search returned items by name or category..."
+          placeholder="Search returned items by name or folder..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           size="small"

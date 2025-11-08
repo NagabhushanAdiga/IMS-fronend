@@ -120,7 +120,7 @@ export default function Products() {
       return
     }
     if (!formData.category) {
-      setSnackbar({ open: true, message: 'Category is required', severity: 'error' })
+      setSnackbar({ open: true, message: 'Folder is required', severity: 'error' })
       return
     }
     if (!formData.totalStock || parseInt(formData.totalStock) < 0) {
@@ -240,7 +240,7 @@ export default function Products() {
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Search items by name or category..."
+          placeholder="Search items by name or folder..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           size="small"
@@ -282,7 +282,7 @@ export default function Products() {
                   <Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
                       <Typography variant="caption" color="text.secondary">
-                        Category: {product.category?.name || product.category}
+                        Folder: {product.category?.name || product.category}
                       </Typography>
                       <Chip
                         label={product.status}
@@ -381,7 +381,7 @@ export default function Products() {
               InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
             />
             <TextField
-              label="Category"
+              label="Folder"
               fullWidth
               required
               select
