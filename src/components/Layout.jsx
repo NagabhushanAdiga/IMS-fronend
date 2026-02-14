@@ -35,6 +35,7 @@ import {
   Brightness4 as DarkModeIcon,
   Brightness7 as LightModeIcon,
   Code as CodeIcon,
+  RequestQuote as RequestQuoteIcon,
 } from '@mui/icons-material'
 import { ThemeContext } from '../context/ThemeContext'
 
@@ -47,6 +48,7 @@ const menuItems = [
   { text: 'Folders', icon: <CategoryIcon />, path: '/folder' },
   // { text: 'Sales', icon: <ShoppingCartIcon />, path: '/sales' },
   { text: 'Returns', icon: <ReturnIcon />, path: '/returns' },
+  { text: 'Invoice', icon: <RequestQuoteIcon />, path: '/invoice' },
   { text: 'Reports', icon: <AssessmentIcon />, path: '/reports' },
   { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
   { text: 'Developer', icon: <CodeIcon />, path: '/developer' },

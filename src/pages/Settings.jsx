@@ -11,33 +11,60 @@ import {
   Avatar,
   CircularProgress,
   Skeleton,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Autocomplete,
+  IconButton,
 } from '@mui/material'
 import {
   Person as PersonIcon,
   Notifications as NotificationsIcon,
   Security as SecurityIcon,
   Save as SaveIcon,
+  Percent as PercentIcon,
+  QrCode2 as QrCodeIcon,
+  CloudUpload as UploadIcon,
+  Delete as DeleteIcon,
 } from '@mui/icons-material'
 import { authAPI } from '../services/api'
 import CustomSnackbar from '../components/Snackbar'
+import { INDIAN_STATES, getDistrictsByState } from '../constants/indianStatesDistricts'
 
 export default function Settings() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [profileData, setProfileData] = useState({
+    shopName: '',
     fullName: '',
     email: '',
     phone: '',
     company: '',
     address: '',
     city: '',
-    country: '',
+    state: '',
+    district: '',
+    country: 'India',
+    gstin: '',
+    upiVpa: '',
+    paymentQrCode: '',
+    bankName: '',
+    bankAccountHolder: '',
+    bankAccountNumber: '',
+    bankIfsc: '',
+    bankBranch: '',
   })
 
   const [pinData, setPinData] = useState({
     currentPin: '',
     newPin: '',
     confirmPin: '',
+  })
+
+  const [taxAndDiscount, setTaxAndDiscount] = useState({
+    taxPercentage: 0,
+    discountPercentage: 0,
   })
 
   const [notifications, setNotifications] = useState({
@@ -59,17 +86,36 @@ export default function Settings() {
       setLoading(true)
       const { data } = await authAPI.getProfile()
       setProfileData({
+        shopName: data.shopName || '',
         fullName: data.fullName || data.name || '',
         email: data.email || '',
         phone: data.phone || '',
         company: data.company || '',
         address: data.address || '',
         city: data.city || '',
-        country: data.country || '',
+        state: data.state || '',
+        district: data.district || '',
+        country: data.country || 'India',
+        gstin: data.gstin || '',
+        upiVpa: data.upiVpa || '',
+        paymentQrCode: data.paymentQrCode || '',
+        bankName: data.bankName || '',
+        bankAccountHolder: data.bankAccountHolder || '',
+        bankAccountNumber: data.bankAccountNumber || '',
+        bankIfsc: data.bankIfsc || '',
+        bankBranch: data.bankBranch || '',
       })
       // Load notifications if available from backend
       if (data.notifications) {
         setNotifications(data.notifications)
+      }
+      // Load tax and discount if available
+      if (data.taxPercentage !== undefined || data.taxAndDiscount) {
+        const td = data.taxAndDiscount || {}
+        setTaxAndDiscount({
+          taxPercentage: td.taxPercentage ?? data.taxPercentage ?? 0,
+          discountPercentage: td.discountPercentage ?? data.discountPercentage ?? 0,
+        })
       }
     } catch (error) {
       console.error('Error fetching profile:', error)
@@ -145,6 +191,27 @@ export default function Settings() {
     }
   }
 
+  const handleTaxDiscountSave = async () => {
+    try {
+      setSaving(true)
+      await authAPI.updateProfile({ taxAndDiscount })
+      setSnackbar({
+        open: true,
+        message: 'Tax and discount saved successfully!',
+        severity: 'success'
+      })
+    } catch (error) {
+      console.error('Error saving tax and discount:', error)
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.message || 'Failed to save tax and discount',
+        severity: 'error'
+      })
+    } finally {
+      setSaving(false)
+    }
+  }
+
   const handleNotificationsSave = async () => {
     try {
       setSaving(true)
@@ -212,12 +279,12 @@ export default function Settings() {
                   background: 'rgba(255, 255, 255, 0.2)',
                 }}
               >
-                {profileData.fullName ? profileData.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : 'U'}
+                {(profileData.shopName || profileData.fullName) ? (profileData.shopName || profileData.fullName).split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
               </Avatar>
             </Grid>
             <Grid item xs>
               <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 0.5, fontSize: { xs: '1.5rem', md: '2rem' } }}>
-                {profileData.fullName || 'User'}
+                {profileData.shopName || profileData.fullName || 'User'}
               </Typography>
               <Typography variant="h6" sx={{ mb: 1, opacity: 0.95, fontSize: { xs: '1rem', md: '1.25rem' } }}>
                 Administrator
@@ -231,7 +298,7 @@ export default function Settings() {
       )}
 
       <Grid container spacing={3}>
-        {/* <Grid item xs={12}>
+        <Grid item xs={12}>
           <Paper sx={{ p: 3, borderRadius: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
               <Box
@@ -248,31 +315,153 @@ export default function Settings() {
                 <PersonIcon sx={{ color: 'white', fontSize: 24 }} />
               </Box>
               <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.125rem' } }}>
-                Profile information
+                Profile
               </Typography>
             </Box>
 
             {loading ? (
-              <>
-                <Grid container spacing={2}>
-                  {Array.from({ length: 6 }).map((_, index) => (
-                    <Grid item xs={12} md={index === 4 ? 12 : 6} key={index}>
-                      <Skeleton variant="rectangular" height={56} sx={{ borderRadius: 1 }} />
-                    </Grid>
-                  ))}
-                </Grid>
-              </>
+              <Grid container spacing={2}>
+                {Array.from({ length: 8 }).map((_, index) => (
+                  <Grid item xs={12} md={6} key={index}>
+                    <Skeleton variant="rectangular" height={56} sx={{ borderRadius: 1 }} />
+                  </Grid>
+                ))}
+              </Grid>
             ) : (
               <>
-
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6}>
                     <TextField
                       fullWidth
-                      label="Full name"
+                      label="Shop Name"
+                      size="small"
+                      placeholder="Business / shop name for invoices"
+                      value={profileData.shopName}
+                      onChange={(e) => setProfileData({ ...profileData, shopName: e.target.value })}
+                      disabled={saving}
+                      InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      fullWidth
+                      label="Name"
                       size="small"
                       value={profileData.fullName}
                       onChange={(e) => setProfileData({ ...profileData, fullName: e.target.value })}
+                      disabled={saving}
+                      InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      fullWidth
+                      label="UPI ID (optional - for dynamic QR)"
+                      size="small"
+                      placeholder="e.g. yourbusiness@paytm"
+                      value={profileData.upiVpa}
+                      onChange={(e) => setProfileData({ ...profileData, upiVpa: e.target.value })}
+                      disabled={saving}
+                      InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
+                      helperText="Use if not uploading QR; generates QR with amount"
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box sx={{ border: '1px dashed', borderColor: 'divider', borderRadius: 2, p: 2, bgcolor: 'action.hover', '&:hover': { borderColor: 'primary.main', bgcolor: 'action.selected' } }}>
+                      <Typography variant="subtitle2" sx={{ mb: 1.5, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <QrCodeIcon fontSize="small" /> Payment QR Code
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.5 }}>
+                        Upload your business payment QR code. It will appear on invoices for customers to scan.
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                        <input
+                          accept="image/*"
+                          style={{ display: 'none' }}
+                          id="qr-upload"
+                          type="file"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0]
+                            if (file && file.type.startsWith('image/')) {
+                              const reader = new FileReader()
+                              reader.onload = () => setProfileData({ ...profileData, paymentQrCode: reader.result })
+                              reader.readAsDataURL(file)
+                            }
+                            e.target.value = ''
+                          }}
+                        />
+                        <label htmlFor="qr-upload">
+                          <Button variant="outlined" component="span" startIcon={<UploadIcon />} size="small" disabled={saving}>
+                            Upload QR
+                          </Button>
+                        </label>
+                        {profileData.paymentQrCode && (
+                          <>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Box component="img" src={profileData.paymentQrCode} alt="Payment QR" sx={{ width: 80, height: 80, objectFit: 'contain', border: 1, borderColor: 'divider', borderRadius: 1 }} />
+                              <IconButton size="small" onClick={() => setProfileData({ ...profileData, paymentQrCode: '' })} color="error" disabled={saving} title="Remove">
+                                <DeleteIcon fontSize="small" />
+                              </IconButton>
+                            </Box>
+                          </>
+                        )}
+                      </Box>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box sx={{ p: 2, border: 1, borderColor: 'divider', borderRadius: 2, bgcolor: 'action.hover' }}>
+                      <Typography variant="subtitle2" sx={{ mb: 1.5 }}>Bank Details (shown on invoice)</Typography>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <TextField fullWidth size="small" label="Bank Name" value={profileData.bankName} onChange={(e) => setProfileData({ ...profileData, bankName: e.target.value })} disabled={saving} />
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <TextField fullWidth size="small" label="Account Holder Name" value={profileData.bankAccountHolder} onChange={(e) => setProfileData({ ...profileData, bankAccountHolder: e.target.value })} disabled={saving} />
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <TextField fullWidth size="small" label="Account Number" value={profileData.bankAccountNumber} onChange={(e) => setProfileData({ ...profileData, bankAccountNumber: e.target.value })} disabled={saving} />
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <TextField fullWidth size="small" label="IFSC Code" placeholder="e.g. SBIN0001234" value={profileData.bankIfsc} onChange={(e) => setProfileData({ ...profileData, bankIfsc: e.target.value })} disabled={saving} />
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <TextField fullWidth size="small" label="Branch" value={profileData.bankBranch} onChange={(e) => setProfileData({ ...profileData, bankBranch: e.target.value })} disabled={saving} />
+                      </Grid>
+                    </Grid>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      fullWidth
+                      label="GSTIN"
+                      size="small"
+                      placeholder="e.g. 22AAAAA0000A1Z5"
+                      value={profileData.gstin}
+                      onChange={(e) => setProfileData({ ...profileData, gstin: e.target.value })}
+                      disabled={saving}
+                      InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Address"
+                      size="small"
+                      multiline
+                      rows={2}
+                      value={profileData.address}
+                      onChange={(e) => setProfileData({ ...profileData, address: e.target.value })}
+                      disabled={saving}
+                      InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      fullWidth
+                      label="Phone Number"
+                      size="small"
+                      value={profileData.phone}
+                      onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
                       disabled={saving}
                       InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
                     />
@@ -290,37 +479,28 @@ export default function Settings() {
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <TextField
-                      fullWidth
-                      label="Phone"
-                      size="small"
-                      value={profileData.phone}
-                      onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                      disabled={saving}
-                      InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <TextField
-                      fullWidth
-                      label="Company"
-                      size="small"
-                      value={profileData.company}
-                      onChange={(e) => setProfileData({ ...profileData, company: e.target.value })}
-                      disabled={saving}
-                      InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Address"
-                      size="small"
-                      value={profileData.address}
-                      onChange={(e) => setProfileData({ ...profileData, address: e.target.value })}
-                      disabled={saving}
-                      InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
-                    />
+                    <FormControl fullWidth size="small" disabled={saving}>
+                      <InputLabel id="state-label">State</InputLabel>
+                      <Select
+                        labelId="state-label"
+                        label="State"
+                        value={profileData.state || ''}
+                        onChange={(e) => setProfileData({
+                          ...profileData,
+                          state: e.target.value,
+                          district: '',
+                        })}
+                      >
+                        <MenuItem value="">
+                          <em>Select state</em>
+                        </MenuItem>
+                        {INDIAN_STATES.map((state) => (
+                          <MenuItem key={state} value={state}>
+                            {state}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
@@ -331,6 +511,24 @@ export default function Settings() {
                       onChange={(e) => setProfileData({ ...profileData, city: e.target.value })}
                       disabled={saving}
                       InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Autocomplete
+                      size="small"
+                      options={getDistrictsByState(profileData.state)}
+                      value={profileData.district || null}
+                      onChange={(_, newValue) => setProfileData({ ...profileData, district: newValue || '' })}
+                      disabled={saving || !profileData.state}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="District"
+                          placeholder="Search and select district"
+                          InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
+                        />
+                      )}
+                      isOptionEqualToValue={(option, value) => option === value}
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
@@ -370,7 +568,84 @@ export default function Settings() {
               </>
             )}
           </Paper>
-        </Grid> */}
+        </Grid>
+
+        <Grid item xs={12}>
+          <Paper sx={{ p: 3, borderRadius: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box
+                sx={{
+                  background: gradients[2],
+                  borderRadius: 2,
+                  p: 1.25,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 4px 12px rgba(240, 147, 251, 0.3)',
+                }}
+              >
+                <PercentIcon sx={{ color: 'white', fontSize: 24 }} />
+              </Box>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.125rem' } }}>
+                Tax and Discount
+              </Typography>
+            </Box>
+
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="Tax Percentage (%)"
+                  size="small"
+                  type="number"
+                  value={taxAndDiscount.taxPercentage}
+                  onChange={(e) => setTaxAndDiscount({ ...taxAndDiscount, taxPercentage: parseFloat(e.target.value) || 0 })}
+                  disabled={saving}
+                  inputProps={{ min: 0, max: 100, step: 0.5 }}
+                  helperText="Default tax rate applied to invoices"
+                  InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="Discount (%)"
+                  size="small"
+                  type="number"
+                  value={taxAndDiscount.discountPercentage}
+                  onChange={(e) => setTaxAndDiscount({ ...taxAndDiscount, discountPercentage: parseFloat(e.target.value) || 0 })}
+                  disabled={saving}
+                  inputProps={{ min: 0, max: 100, step: 0.5 }}
+                  helperText="Discount if applicable (0 = no discount)"
+                  InputLabelProps={{ sx: { fontSize: '0.875rem' } }}
+                  placeholder="0"
+                />
+              </Grid>
+            </Grid>
+
+            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
+              <Button
+                variant="contained"
+                size="large"
+                startIcon={saving ? <CircularProgress size={20} color="inherit" /> : <SaveIcon />}
+                onClick={handleTaxDiscountSave}
+                disabled={saving}
+                sx={{
+                  background: gradients[2],
+                  px: 4,
+                  py: 1.25,
+                  fontWeight: 600,
+                  boxShadow: '0 4px 12px rgba(240, 147, 251, 0.3)',
+                  '&:hover': {
+                    boxShadow: '0 6px 16px rgba(240, 147, 251, 0.4)',
+                  }
+                }}
+              >
+                {saving ? 'Saving...' : 'Save tax & discount'}
+              </Button>
+            </Box>
+          </Paper>
+        </Grid>
 
         <Grid item xs={12}>
           <Paper sx={{ p: 3, borderRadius: 2 }}>

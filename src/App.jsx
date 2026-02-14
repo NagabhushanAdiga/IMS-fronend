@@ -16,6 +16,7 @@ import Search from './pages/Search'
 import Reports from './pages/Reports'
 import Settings from './pages/Settings'
 import Developer from './pages/Developer'
+import Invoice from './pages/Invoice'
 
 function AppContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -62,6 +63,7 @@ function AppContent() {
           <Route path="folder/:folderId" element={<FolderItems />} />
           <Route path="sales" element={<Sales />} />
           <Route path="returns" element={<Returns />} />
+          <Route path="invoice" element={<Invoice />} />
           <Route path="search" element={<Search />} />
           <Route path="reports" element={<Reports />} />
           <Route path="settings" element={<Settings />} />
